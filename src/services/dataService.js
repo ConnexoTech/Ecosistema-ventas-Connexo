@@ -93,7 +93,7 @@ export const dataService = {
 
         if (error) {
           console.error("Error creando Admin:", error);
-          throw new Error('Error al inicializar el Admin Principal en la base de datos.');
+          throw new Error('Error de Supabase al crear Admin: ' + error.message);
         }
         _currentUser = insertedAdmin;
         return _currentUser;
