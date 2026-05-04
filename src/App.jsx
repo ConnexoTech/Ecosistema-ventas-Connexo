@@ -45,10 +45,10 @@ function App() {
   };
 
   // --- Handlers ---
-  const handleLogin = async (email, password) => {
+  const handleLogin = async (email, password, selectedRole) => {
     setIsLoading(true);
     try {
-      const userData = await dataService.login(email, password);
+      const userData = await dataService.login(email, password, selectedRole);
       setUser(userData);
       setIsAuthenticated(true);
       setShowOnboarding(true);

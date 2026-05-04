@@ -10,7 +10,7 @@ const Login = ({ onLogin, onAdminBypass }) => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    onLogin(email, password);
+    onLogin(email, password, activeRole);
   };
 
   return (

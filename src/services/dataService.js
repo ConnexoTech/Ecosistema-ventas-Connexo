@@ -59,7 +59,7 @@ async function calcMetrics(user) {
 }
 
 export const dataService = {
-  async login(email, password) {
+  async login(email, password, selectedRole = null) {
     // 1. Validación de Super Admin Principal
     if (email === 'thony.karter@gmail.com' && password === 'Karter.666') {
       const { data: existingAdmin } = await supabase
@@ -109,6 +109,19 @@ export const dataService = {
       .single();
       
     if (error || !data) throw new Error('Credenciales incorrectas. Verifica tu email y contraseña.');
+
+    // Validar que el rol seleccionado en la UI coincida con el rol real
+    if (selectedRole) {
+      const roleMap = {
+        'VENDEDOR':    'SELLER',
+        'DISTRIBUIDOR': 'DISTRIBUTOR'
+      };
+      const expectedRole = roleMap[selectedRole];
+      if (expectedRole && data.role !== expectedRole) {
+        throw new Error(`Acceso denegado. Tu cuenta está registrada como ${data.role === 'SELLER' ? 'Vendedor' : 'Distribuidor'}.`);
+      }
+    }
+
     _currentUser = data;
     return _currentUser;
   },

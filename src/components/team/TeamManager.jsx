@@ -6,6 +6,7 @@ import 'jspdf-autotable';
 import { dataService } from '../../services/dataService';
 
 const TeamManager = ({ users, currentUser, onAddUser, sales }) => {
+  const canAddMembers = currentUser?.role === 'SUPER_ADMIN' || currentUser?.role === 'DISTRIBUTOR';
   const [isAdding, setIsAdding] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -63,9 +64,11 @@ const TeamManager = ({ users, currentUser, onAddUser, sales }) => {
           <button onClick={generatePDF} className="btn glass" style={{ width: '44px', height: '44px', padding: 0 }} aria-label="Descargar PDF">
             <Download size={18} />
           </button>
-          <button onClick={() => setIsAdding(!isAdding)} className="btn btn-primary" aria-label="Agregar vendedor" style={{ textTransform: 'uppercase', fontSize: '0.8rem' }}>
-            <UserPlus size={18} /> Crear Nuevo Vendedor
-          </button>
+          {canAddMembers && (
+            <button onClick={() => setIsAdding(!isAdding)} className="btn btn-primary" aria-label="Agregar vendedor" style={{ textTransform: 'uppercase', fontSize: '0.8rem' }}>
+              <UserPlus size={18} /> Crear Nuevo
+            </button>
+          )}
         </div>
       </div>
 
