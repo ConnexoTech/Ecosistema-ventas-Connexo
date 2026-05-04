@@ -9,9 +9,11 @@ import SaleForm     from './components/sales/SaleForm';
 import Academy      from './components/academy/Academy';
 import { dataService, PLANS } from './services/dataService';
 
+const SESSION_KEY = 'connexo_session';
+
 function App() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
-  const [isLoading,       setIsLoading]       = useState(false);
+  const [isLoading,       setIsLoading]       = useState(true);   // true al inicio para restaurar sesión
   const [activeTab,       setActiveTab]       = useState('dashboard');
   const [user,            setUser]            = useState(null);
   const [team,            setTeam]            = useState([]);
@@ -24,10 +26,27 @@ function App() {
   ]);
   const [highContrast,    setHighContrast]    = useState(false);
 
-  // Refrescar métricas y equipo cuando cambia el usuario
+  // ── Restaurar sesión al recargar ──────────────────────────────────────
+  useEffect(() => {
+    const saved = localStorage.getItem(SESSION_KEY);
+    if (saved) {
+      try {
+        const savedUser = JSON.parse(saved);
+        setUser(savedUser);
+        setIsAuthenticated(true);
+        // No mostramos onboarding al recargar, ya pasó antes
+        setShowOnboarding(false);
+      } catch {
+        localStorage.removeItem(SESSION_KEY);
+      }
+    }
+    setIsLoading(false);
+  }, []);
+
+  // ── Refrescar métricas y equipo cuando cambia el usuario ──────────────
   useEffect(() => {
     if (isAuthenticated && user) refreshData();
-  }, [isAuthenticated, user?.uid]);
+  }, [isAuthenticated, user?.id]);
 
   const refreshData = async () => {
     try {
@@ -49,6 +68,7 @@ function App() {
     setIsLoading(true);
     try {
       const userData = await dataService.login(email, password, selectedRole);
+      localStorage.setItem(SESSION_KEY, JSON.stringify(userData)); // 💾 Guardar sesión
       setUser(userData);
       setIsAuthenticated(true);
       setShowOnboarding(true);
@@ -60,6 +80,7 @@ function App() {
   };
 
   const handleAdminBypass = (adminUser) => {
+    localStorage.setItem(SESSION_KEY, JSON.stringify(adminUser)); // 💾 Guardar sesión admin
     setUser(adminUser);
     setIsAuthenticated(true);
     setShowOnboarding(true);
@@ -67,6 +88,7 @@ function App() {
 
   const handleLogout = async () => {
     await dataService.logout();
+    localStorage.removeItem(SESSION_KEY); // 🗑️ Limpiar sesión guardada
     setIsAuthenticated(false);
     setUser(null);
     setSales([]);
