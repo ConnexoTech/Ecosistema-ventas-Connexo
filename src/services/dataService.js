@@ -18,41 +18,49 @@ async function calcMetrics(user) {
 
   if (!user.is_certified) return { rate: 0, base: 0, level: 'BLOQUEADO' };
 
+  // ─── VENDEDOR ──────────────────────────────────────────────────────────
+  // Vendedor BASIC  (0–19 ventas)  : sin sueldo base, sin comisión
+  // Vendedor PRO    (20–30 ventas) : 7% comisión + $250 base
+  // Vendedor ULTRA  (31+ ventas)   : 9% comisión + $300 base
   if (user.role === ROLES.SELLER) {
     const { count: mySales, error } = await supabase
       .from('sales')
       .select('*', { count: 'exact', head: true })
       .eq('seller_id', uid);
-    
+
     if (error) console.error(error);
     const total = mySales || 0;
 
     if (total >= 31) return { rate: 0.09, base: 300, level: 'VENDEDOR ULTRA' };
     if (total >= 20) return { rate: 0.07, base: 250, level: 'VENDEDOR PRO'   };
-    return           { rate: 0.05, base: 0,   level: 'VENDEDOR BASIC'        };
+    return           { rate: 0,    base: 0,   level: 'VENDEDOR BASIC'        };
   }
 
+  // ─── DISTRIBUIDOR ──────────────────────────────────────────────────────
+  // Distribuidor BASIC (0–49 ventas totales)   : sin sueldo base, sin comisión
+  // Distribuidor 1     (50–100 ventas totales) : 12% comisión + $500 base
+  // Distribuidor 2     (101–200 ventas totales): 15% comisión + $600 base
+  // Distribuidor 3     (201+ ventas totales)   : 18% comisión + $600 base
   if (user.role === ROLES.DISTRIBUTOR) {
-    // get team members
     const { data: team } = await supabase
       .from('profiles')
       .select('id')
       .eq('parent_id', uid);
-    
+
     const teamIds = [uid, ...(team?.map(t => t.id) || [])];
-    
+
     const { count: teamSales, error } = await supabase
       .from('sales')
       .select('*', { count: 'exact', head: true })
       .in('seller_id', teamIds);
-      
+
     if (error) console.error(error);
     const total = teamSales || 0;
 
-    if (total >= 201) return { rate: 0.18, base: 600, level: 'PARTNER 3'    };
-    if (total >= 101) return { rate: 0.15, base: 600, level: 'PARTNER 2'    };
-    if (total >= 50)  return { rate: 0.12, base: 500, level: 'PARTNER 1'    };
-    return            { rate: 0.10, base: 0,   level: 'PARTNER BASIC'       };
+    if (total >= 201) return { rate: 0.18, base: 600, level: 'DISTRIBUIDOR 3'    };
+    if (total >= 101) return { rate: 0.15, base: 600, level: 'DISTRIBUIDOR 2'    };
+    if (total >= 50)  return { rate: 0.12, base: 500, level: 'DISTRIBUIDOR 1'    };
+    return            { rate: 0,    base: 0,   level: 'DISTRIBUIDOR BASIC'       };
   }
 
   return { rate: 0, base: 0, level: 'SUPER ADMIN' };
