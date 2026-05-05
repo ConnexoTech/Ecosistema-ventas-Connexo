@@ -48,14 +48,21 @@ function App() {
     if (isAuthenticated && user) refreshData();
   }, [isAuthenticated, user?.id]);
 
-  const refreshData = async () => {
+  const refreshData = async (currentUser = user) => {
+    if (!currentUser) return;
+    const uid = currentUser.uid || currentUser.id;
+    const role = currentUser.role;
     try {
       const [newMetrics, teamData, salesData] = await Promise.all([
-        dataService.getMetrics(user),
-        user.role === 'SUPER_ADMIN' 
-          ? dataService.getAllProfiles() 
-          : (user.role === 'DISTRIBUTOR' ? dataService.getTeam(user.uid || user.id) : Promise.resolve([])),
-        dataService.getSales(user.uid || user.id)
+        dataService.getMetrics(currentUser),
+        role === 'SUPER_ADMIN'
+          ? dataService.getAllProfiles()
+          : role === 'DISTRIBUTOR'
+            ? dataService.getTeam(uid)
+            : Promise.resolve([]),
+        role === 'SELLER'
+          ? dataService.getSales(uid)
+          : dataService.getSalesForTeam(uid, role)
       ]);
       setMetrics(newMetrics);
       setTeam(teamData);
@@ -70,10 +77,12 @@ function App() {
     setIsLoading(true);
     try {
       const userData = await dataService.login(email, password, selectedRole);
-      localStorage.setItem(SESSION_KEY, JSON.stringify(userData)); // 💾 Guardar sesión
+      localStorage.setItem(SESSION_KEY, JSON.stringify(userData));
       setUser(userData);
       setIsAuthenticated(true);
       setShowOnboarding(true);
+      // Refrescar datos inmediatamente con el usuario recién cargado
+      refreshData(userData);
     } catch (err) {
       alert('Error: ' + err.message);
     } finally {
@@ -189,26 +198,68 @@ function App() {
             </div>
           </div>
 
-          {/* Sales History */}
-          <h3 style={{ fontSize: '0.9rem', textTransform: 'uppercase', marginBottom: '1rem' }}>Historial de Ventas</h3>
-          <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+          {/* Stats Grid — contextualized per role */}
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16, marginBottom: '2.5rem' }}>
+            <div className="card glass" style={{ borderLeft: '3px solid var(--accent)' }}>
+              <p style={{ fontSize: '0.55rem', opacity: 0.5, letterSpacing: '1px' }}>BILLETERA</p>
+              <h3 style={{ margin: '4px 0', fontSize: '1.25rem', color: 'white' }}>${(user?.wallet_balance || 0).toFixed(2)}</h3>
+            </div>
+            <div className="card glass" style={{ borderLeft: '3px solid var(--success)' }}>
+              <p style={{ fontSize: '0.55rem', opacity: 0.5, letterSpacing: '1px' }}>SUELDO BASE</p>
+              <h3 style={{ margin: '4px 0', fontSize: '1.25rem', color: metrics.base > 0 ? 'var(--success)' : 'white' }}>${metrics.base.toFixed(0)}</h3>
+            </div>
+            <div className="card glass" style={{ borderLeft: '3px solid var(--accent)' }}>
+              <p style={{ fontSize: '0.55rem', opacity: 0.5, letterSpacing: '1px' }}>COMISIÓN</p>
+              <h3 style={{ margin: '4px 0', fontSize: '1.25rem', color: metrics.rate > 0 ? 'var(--accent)' : 'white' }}>{(metrics.rate * 100).toFixed(0)}%</h3>
+            </div>
+            <div className="card glass" style={{ borderLeft: '3px solid white' }}>
+              <p style={{ fontSize: '0.55rem', opacity: 0.5, letterSpacing: '1px' }}>
+                {user?.role === 'SELLER' ? 'MIS VENTAS' : 'VENTAS RED'}
+              </p>
+              <h3 style={{ margin: '4px 0', fontSize: '1.25rem', color: 'white' }}>{sales.length}</h3>
+            </div>
+          </div>
+
+          {/* Sales Feed */}
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
+            <h3 style={{ fontSize: '0.85rem', textTransform: 'uppercase', opacity: 0.7, letterSpacing: '1px', margin: 0 }}>
+              {user?.role === 'SELLER' ? 'Mis Ventas' : 'Feed de Ventas — Red Completa'}
+            </h3>
+            <span style={{ fontSize: '0.65rem', color: 'var(--accent)', fontWeight: 700 }}>
+              Total: ${sales.reduce((a, s) => a + (s.amount || 0), 0).toFixed(2)}
+            </span>
+          </div>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
             {sales.length === 0 ? (
               <p style={{ textAlign: 'center', opacity: 0.4, fontSize: '0.8rem', padding: '2rem' }}>
                 Aún no hay ventas registradas.<br/>¡Registra tu primera venta!
               </p>
             ) : (
-              sales.map(s => (
-                <div key={s.id} className="card glass" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                  <div>
-                    <p style={{ margin: 0, fontWeight: 700, fontSize: '0.85rem' }}>{s.customer_name}</p>
-                    <p style={{ margin: 0, fontSize: '0.7rem', opacity: 0.5 }}>{s.plan_type} · {new Date(s.created_at).toLocaleDateString()}</p>
+              sales.slice(0, 20).map(s => {
+                // Para admin/distribuidor mostrar quién hizo la venta
+                const sellerMember = user?.role !== 'SELLER' && team.find(m => m.id === s.seller_id);
+                return (
+                  <div key={s.id} className="card glass" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: '12px' }}>
+                    <div style={{ flex: 1, minWidth: 0 }}>
+                      <p style={{ margin: 0, fontWeight: 700, fontSize: '0.85rem', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                        {s.customer_name || 'Cliente'}
+                      </p>
+                      <p style={{ margin: 0, fontSize: '0.65rem', opacity: 0.5 }}>
+                        {s.plan_type} · {new Date(s.created_at).toLocaleDateString()}
+                        {sellerMember && (
+                          <span style={{ marginLeft: '6px', color: 'var(--accent)', fontWeight: 600 }}>
+                            · {sellerMember.full_name || sellerMember.name}
+                          </span>
+                        )}
+                      </p>
+                    </div>
+                    <div style={{ textAlign: 'right', flexShrink: 0 }}>
+                      <p style={{ margin: 0, color: 'var(--success)', fontWeight: 700, fontSize: '0.9rem' }}>+${(s.commission_earned || 0).toFixed(2)}</p>
+                      <p style={{ margin: 0, fontSize: '0.6rem', opacity: 0.5 }}>${(s.amount || 0).toFixed(2)}</p>
+                    </div>
                   </div>
-                  <div style={{ textAlign: 'right' }}>
-                    <p style={{ margin: 0, color: 'var(--accent)', fontWeight: 700 }}>+${s.commission_earned.toFixed(2)}</p>
-                    <p style={{ margin: 0, fontSize: '0.65rem', opacity: 0.5 }}>${s.amount.toFixed(2)}</p>
-                  </div>
-                </div>
-              ))
+                );
+              })
             )}
           </div>
         </motion.div>

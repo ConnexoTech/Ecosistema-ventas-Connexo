@@ -199,15 +199,46 @@ export const dataService = {
     return sale;
   },
 
+  // Sales solo propias (vendedor)
   async getSales(userId) {
     const { data, error } = await supabase
       .from('sales')
       .select('*')
       .eq('seller_id', userId)
       .order('created_at', { ascending: false });
-      
     if (error) throw new Error(error.message);
-    return data;
+    return data || [];
+  },
+
+  // Sales de todo el equipo (distribuidor / super admin)
+  async getSalesForTeam(userId, role) {
+    let teamIds = [userId];
+
+    if (role === ROLES.SUPER_ADMIN) {
+      // Super admin: todas las ventas del sistema
+      const { data, error } = await supabase
+        .from('sales')
+        .select('*')
+        .order('created_at', { ascending: false });
+      if (error) throw new Error(error.message);
+      return data || [];
+    }
+
+    // Distribuidor: sus propias ventas + ventas de su equipo
+    const { data: team } = await supabase
+      .from('profiles')
+      .select('id')
+      .eq('parent_id', userId);
+
+    if (team?.length) teamIds = [userId, ...team.map(m => m.id)];
+
+    const { data, error } = await supabase
+      .from('sales')
+      .select('*')
+      .in('seller_id', teamIds)
+      .order('created_at', { ascending: false });
+    if (error) throw new Error(error.message);
+    return data || [];
   },
 
   async getTeam(parentId) {
