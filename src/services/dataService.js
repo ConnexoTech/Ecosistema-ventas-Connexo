@@ -153,6 +153,9 @@ export const dataService = {
       commission_earned: commission,
       customer_name: customerData.name,
       customer_phone: customerData.phone,
+      customer_email: customerData.email || null,
+      customer_company: customerData.company || null,
+      customer_notes: customerData.notes || null,
       status: 'COMPLETED'
     };
 

@@ -265,9 +265,53 @@ function App() {
             {(user?.full_name || 'U').charAt(0).toUpperCase()}
           </div>
           <h2 style={{ textTransform: 'uppercase', fontSize: '1.2rem' }}>{user?.full_name}</h2>
-          <p style={{ color: 'var(--accent)', fontWeight: 700, marginBottom: '0.5rem' }}>{metrics.level}</p>
-          <p style={{ fontSize: '0.75rem', opacity: 0.5 }}>{user?.email}</p>
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12, margin: '2rem 0' }}>
+          <p style={{ color: 'var(--accent)', fontWeight: 700, marginBottom: '0.3rem', fontSize: '1rem' }}>{metrics.level}</p>
+          <p style={{ fontSize: '0.75rem', opacity: 0.5, marginBottom: '0.2rem' }}>{user?.email}</p>
+          <p style={{ fontSize: '0.7rem', opacity: 0.4 }}>{user?.role?.replace('_', ' ')}</p>
+
+          {/* Commission Breakdown */}
+          <div style={{ background: 'rgba(255,102,0,0.08)', border: '1px solid rgba(255,102,0,0.25)', borderRadius: '12px', padding: '1.2rem', margin: '1.5rem 0', textAlign: 'left' }}>
+            <p style={{ fontSize: '0.65rem', textTransform: 'uppercase', opacity: 0.6, marginBottom: '1rem' }}>Estructura de Comisiones</p>
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
+              <div className="card glass" style={{ textAlign: 'center', padding: '0.8rem' }}>
+                <p style={{ fontSize: '0.55rem', opacity: 0.5, textTransform: 'uppercase' }}>Comisión Activa</p>
+                <h3 style={{ margin: '4px 0', color: 'var(--accent)', fontSize: '1.4rem' }}>{(metrics.rate * 100).toFixed(0)}%</h3>
+              </div>
+              <div className="card glass" style={{ textAlign: 'center', padding: '0.8rem' }}>
+                <p style={{ fontSize: '0.55rem', opacity: 0.5, textTransform: 'uppercase' }}>Sueldo Base</p>
+                <h3 style={{ margin: '4px 0', color: metrics.base > 0 ? 'var(--success)' : 'inherit', fontSize: '1.4rem' }}>${metrics.base.toFixed(0)}</h3>
+              </div>
+              <div className="card glass" style={{ textAlign: 'center', padding: '0.8rem' }}>
+                <p style={{ fontSize: '0.55rem', opacity: 0.5, textTransform: 'uppercase' }}>Billetera</p>
+                <h3 style={{ margin: '4px 0', fontSize: '1.4rem' }}>${(user?.wallet_balance || 0).toFixed(2)}</h3>
+              </div>
+              <div className="card glass" style={{ textAlign: 'center', padding: '0.8rem' }}>
+                <p style={{ fontSize: '0.55rem', opacity: 0.5, textTransform: 'uppercase' }}>Ventas</p>
+                <h3 style={{ margin: '4px 0', fontSize: '1.4rem' }}>{sales.length}</h3>
+              </div>
+            </div>
+
+            {/* Next tier hint */}
+            {user?.role === 'SELLER' && (
+              <div style={{ marginTop: '1rem', padding: '0.8rem', background: 'rgba(255,255,255,0.04)', borderRadius: '8px' }}>
+                <p style={{ fontSize: '0.65rem', opacity: 0.7, marginBottom: '4px' }}>Próximo nivel:</p>
+                {sales.length < 20 && <p style={{ fontSize: '0.7rem', color: 'var(--accent)' }}>Vendedor PRO → {20 - sales.length} ventas más (7% + $250 base)</p>}
+                {sales.length >= 20 && sales.length < 31 && <p style={{ fontSize: '0.7rem', color: 'var(--accent)' }}>Vendedor ULTRA → {31 - sales.length} ventas más (9% + $300 base)</p>}
+                {sales.length >= 31 && <p style={{ fontSize: '0.7rem', color: 'var(--success)' }}>🏆 Nivel máximo alcanzado</p>}
+              </div>
+            )}
+            {user?.role === 'DISTRIBUTOR' && (
+              <div style={{ marginTop: '1rem', padding: '0.8rem', background: 'rgba(255,255,255,0.04)', borderRadius: '8px' }}>
+                <p style={{ fontSize: '0.65rem', opacity: 0.7, marginBottom: '4px' }}>Progreso del equipo:</p>
+                {metrics.level === 'DISTRIBUIDOR BASIC' && <p style={{ fontSize: '0.7rem', color: 'var(--accent)' }}>Distribuidor 1 → {50 - sales.length} ventas más (12% + $500 base)</p>}
+                {metrics.level === 'DISTRIBUIDOR 1' && <p style={{ fontSize: '0.7rem', color: 'var(--accent)' }}>Distribuidor 2 → alcanza 101 ventas (15% + $600 base)</p>}
+                {metrics.level === 'DISTRIBUIDOR 2' && <p style={{ fontSize: '0.7rem', color: 'var(--accent)' }}>Distribuidor 3 → alcanza 201 ventas (18% + $600 base)</p>}
+                {metrics.level === 'DISTRIBUIDOR 3' && <p style={{ fontSize: '0.7rem', color: 'var(--success)' }}>🏆 Nivel máximo alcanzado</p>}
+              </div>
+            )}
+          </div>
+
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12, marginBottom: '1.5rem' }}>
             <div className="card glass">
               <p style={{ fontSize: '0.6rem', opacity: 0.5 }}>ROL</p>
               <p style={{ margin: 0, fontWeight: 700, fontSize: '0.8rem' }}>{user?.role?.replace('_', ' ')}</p>

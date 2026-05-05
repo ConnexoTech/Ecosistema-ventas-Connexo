@@ -96,10 +96,16 @@ const TeamManager = ({ users, currentUser, onAddUser, sales }) => {
             placeholder="Correo electrónico" 
             style={{ width: '100%', padding: '12px', background: 'rgba(0,0,0,0.3)', border: '1px solid var(--glass-border)', color: 'white', borderRadius: '8px' }} 
           />
-          {currentUser?.role === 'SUPER_ADMIN' && (
-            <select name="role" style={{ width: '100%', padding: '12px', background: 'rgba(0,0,0,0.3)', border: '1px solid var(--glass-border)', color: 'white', borderRadius: '8px' }}>
+          {canAddMembers && (
+            <select
+              name="role"
+              style={{ width: '100%', padding: '12px', background: 'rgba(0,0,0,0.3)', border: '1px solid var(--glass-border)', color: 'white', borderRadius: '8px' }}
+            >
               <option value="SELLER">Vendedor</option>
-              <option value="DISTRIBUTOR">Distribuidor</option>
+              {/* Distribuidores solo pueden crear vendedores */}
+              {currentUser?.role === 'SUPER_ADMIN' && (
+                <option value="DISTRIBUTOR">Distribuidor</option>
+              )}
             </select>
           )}
           <p style={{ fontSize: '0.7rem', opacity: 0.5 }} aria-live="polite">
