@@ -137,48 +137,53 @@ function App() {
     switch (activeTab) {
 
       case 'dashboard': return (
-        <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} style={{ padding: '0 1.5rem 100px', fontFamily: 'Verdana, sans-serif' }}>
+        <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="slide-up" style={{ padding: '0 1.5rem 100px', fontFamily: 'var(--font-main)' }}>
 
           {/* Status Card */}
-          <div className="card glass" style={{ marginBottom: '1.5rem', border: '1px solid var(--accent)' }}>
-            <p style={{ fontSize: '0.65rem', opacity: 0.6, textTransform: 'uppercase' }}>Nivel Actual</p>
-            <h2 style={{ color: 'var(--accent)', margin: '4px 0', fontSize: '1.2rem' }}>{metrics.level}</h2>
+          <div className="card glass glow-pulse" style={{ marginBottom: '2rem', border: '1px solid var(--accent-glow)', background: 'linear-gradient(135deg, var(--bg-secondary) 0%, #0d1629 100%)' }}>
+            <p style={{ fontSize: '0.6rem', opacity: 0.6, textTransform: 'uppercase', letterSpacing: '2px', marginBottom: '8px' }}>Estatus de Agente</p>
+            <h2 style={{ color: 'var(--accent)', margin: '0', fontSize: '1.4rem', textShadow: '0 0 10px var(--accent-glow)' }}>{metrics.level}</h2>
             
-            <div style={{ margin: '16px 0' }}>
-              <p style={{ fontSize: '0.7rem', marginBottom: '4px', opacity: 0.8 }}>Progreso a Nivel ULTRA</p>
-              <progress 
-                aria-label="Progreso para nivel Ultra" 
-                aria-valuenow={Math.min(sales.length, 100)} 
-                aria-valuemax="100"
-                value={Math.min(sales.length, 100)}
-                max="100"
-                style={{ width: '100%', height: '10px', accentColor: 'var(--accent)' }}
-              ></progress>
-              <p style={{ fontSize: '0.65rem', textAlign: 'right', marginTop: '4px', opacity: 0.6 }}>{Math.min(sales.length, 100)} / 100 ventas</p>
+            <div style={{ margin: '20px 0' }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '6px' }}>
+                <p style={{ fontSize: '0.65rem', opacity: 0.8 }}>Progreso de Nivel</p>
+                <p style={{ fontSize: '0.65rem', color: 'var(--accent)' }}>{Math.min(sales.length, 100)}%</p>
+              </div>
+              <div style={{ width: '100%', height: '6px', background: 'rgba(255,255,255,0.05)', borderRadius: '10px', overflow: 'hidden' }}>
+                <motion.div 
+                  initial={{ width: 0 }}
+                  animate={{ width: `${Math.min(sales.length, 100)}%` }}
+                  transition={{ duration: 1, ease: "easeOut" }}
+                  style={{ height: '100%', background: 'linear-gradient(90deg, var(--accent-dark), var(--accent))', boxShadow: '0 0 10px var(--accent-glow)' }} 
+                />
+              </div>
             </div>
 
-            <p style={{ fontSize: '0.75rem', fontWeight: 700, color: user?.is_certified ? 'var(--success)' : 'var(--danger)', fontFamily: 'var(--font-heading)' }}>
-              {user?.is_certified ? '✓ CERTIFICADO CONNEXO' : '⚠ CERTIFICACIÓN PENDIENTE'}
-            </p>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+               <div style={{ width: '8px', height: '8px', borderRadius: '50%', background: user?.is_certified ? 'var(--success)' : 'var(--danger)', boxShadow: `0 0 10px ${user?.is_certified ? 'var(--success)' : 'var(--danger)'}` }} />
+               <p style={{ fontSize: '0.7rem', fontWeight: 700, color: user?.is_certified ? 'var(--success)' : 'var(--danger)', fontFamily: 'var(--font-heading)', margin: 0 }}>
+                 {user?.is_certified ? 'CERTIFICADO CONNEXO' : 'CERTIFICACIÓN PENDIENTE'}
+               </p>
+            </div>
           </div>
 
           {/* Stats Grid */}
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12, marginBottom: '2rem' }}>
-            <div className="card glass">
-              <p style={{ fontSize: '0.6rem', opacity: 0.5 }}>BILLETERA</p>
-              <h3 style={{ margin: 0, fontSize: '1.2rem' }}>${(user?.wallet_balance || 0).toFixed(2)}</h3>
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16, marginBottom: '2.5rem' }}>
+            <div className="card glass" style={{ borderLeft: '3px solid var(--accent)' }}>
+              <p style={{ fontSize: '0.55rem', opacity: 0.5, letterSpacing: '1px' }}>BILLETERA</p>
+              <h3 style={{ margin: '4px 0', fontSize: '1.25rem', color: 'white' }}>${(user?.wallet_balance || 0).toFixed(2)}</h3>
             </div>
-            <div className="card glass">
-              <p style={{ fontSize: '0.6rem', opacity: 0.5 }}>SUELDO BASE</p>
-              <h3 style={{ margin: 0, fontSize: '1.2rem' }}>${metrics.base.toFixed(2)}</h3>
+            <div className="card glass" style={{ borderLeft: '3px solid var(--success)' }}>
+              <p style={{ fontSize: '0.55rem', opacity: 0.5, letterSpacing: '1px' }}>BASE</p>
+              <h3 style={{ margin: '4px 0', fontSize: '1.25rem', color: 'white' }}>${metrics.base.toFixed(0)}</h3>
             </div>
-            <div className="card glass">
-              <p style={{ fontSize: '0.6rem', opacity: 0.5 }}>COMISIÓN</p>
-              <h3 style={{ margin: 0, fontSize: '1.2rem' }}>{(metrics.rate * 100).toFixed(0)}%</h3>
+            <div className="card glass" style={{ borderLeft: '3px solid var(--accent)' }}>
+              <p style={{ fontSize: '0.55rem', opacity: 0.5, letterSpacing: '1px' }}>COMISIÓN</p>
+              <h3 style={{ margin: '4px 0', fontSize: '1.25rem', color: 'white' }}>{(metrics.rate * 100).toFixed(0)}%</h3>
             </div>
-            <div className="card glass">
-              <p style={{ fontSize: '0.6rem', opacity: 0.5 }}>VENTAS</p>
-              <h3 style={{ margin: 0, fontSize: '1.2rem' }}>{sales.length}</h3>
+            <div className="card glass" style={{ borderLeft: '3px solid white' }}>
+              <p style={{ fontSize: '0.55rem', opacity: 0.5, letterSpacing: '1px' }}>VENTAS</p>
+              <h3 style={{ margin: '4px 0', fontSize: '1.25rem', color: 'white' }}>{sales.length}</h3>
             </div>
           </div>
 
@@ -208,17 +213,52 @@ function App() {
       );
 
       case 'sales': return (
-        <div style={{ padding: '0 1.5rem 100px', fontFamily: 'Verdana, sans-serif' }}>
-          <h2 style={{ fontSize: '1.3rem', textTransform: 'uppercase', marginBottom: '0.5rem' }}>Terminal de Ventas</h2>
-          <p style={{ fontSize: '0.75rem', opacity: 0.5, marginBottom: '2rem' }}>Comisión activa: {(metrics.rate * 100).toFixed(0)}%</p>
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-            <button disabled={isLoading} className="btn btn-primary" style={{ padding: '1.2rem', fontSize: '1rem', textTransform: 'uppercase' }} onClick={() => setSelectedPlan('PRO')}>
-              Plan PRO — $97.00
-            </button>
-            <button disabled={isLoading} className="btn btn-primary" style={{ padding: '1.2rem', fontSize: '1rem', background: 'var(--accent-dark)', textTransform: 'uppercase' }} onClick={() => setSelectedPlan('ULTRA')}>
-              Plan ULTRA — $179.00
-            </button>
+        <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="slide-up" style={{ padding: '0 1.5rem 100px', fontFamily: 'var(--font-main)' }}>
+          <div style={{ marginBottom: '2.5rem' }}>
+            <h2 style={{ fontSize: '1.4rem', textTransform: 'uppercase', fontFamily: 'var(--font-heading)' }}>Terminal de Ventas</h2>
+            <p style={{ fontSize: '0.8rem', color: 'var(--text-secondary)' }}>Seleccione el plan de suscripción para el cliente.</p>
           </div>
+
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
+            {/* Plan PRO Card */}
+            <div 
+              className="card glass" 
+              onClick={() => !isLoading && setSelectedPlan('PRO')}
+              style={{ cursor: 'pointer', borderLeft: '4px solid var(--accent)', padding: '1.5rem' }}
+            >
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+                <div>
+                  <span className="tier-badge tier-pro" style={{ marginBottom: '8px', display: 'inline-block' }}>PLAN PRO</span>
+                  <h3 style={{ margin: '4px 0 12px', fontSize: '1.5rem' }}>Connexo Pro</h3>
+                  <p style={{ fontSize: '0.7rem', color: 'var(--text-secondary)', lineHeight: '1.4' }}>Ideal para negocios individuales y freelancers.</p>
+                </div>
+                <div style={{ textAlign: 'right' }}>
+                  <p style={{ fontSize: '0.6rem', opacity: 0.5, textTransform: 'uppercase' }}>Precio</p>
+                  <h3 style={{ margin: 0, color: 'var(--accent)', fontSize: '1.4rem' }}>$97</h3>
+                </div>
+              </div>
+            </div>
+
+            {/* Plan ULTRA Card */}
+            <div 
+              className="card glass" 
+              onClick={() => !isLoading && setSelectedPlan('ULTRA')}
+              style={{ cursor: 'pointer', borderLeft: '4px solid var(--tier-ultra)', padding: '1.5rem', background: 'linear-gradient(135deg, rgba(189,0,255,0.05) 0%, rgba(10,17,31,0) 100%)' }}
+            >
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+                <div>
+                  <span className="tier-badge tier-ultra" style={{ marginBottom: '8px', display: 'inline-block' }}>PLAN ULTRA</span>
+                  <h3 style={{ margin: '4px 0 12px', fontSize: '1.5rem' }}>Connexo Ultra</h3>
+                  <p style={{ fontSize: '0.7rem', color: 'var(--text-secondary)', lineHeight: '1.4' }}>Máxima potencia para empresas y agencias.</p>
+                </div>
+                <div style={{ textAlign: 'right' }}>
+                  <p style={{ fontSize: '0.6rem', opacity: 0.5, textTransform: 'uppercase' }}>Precio</p>
+                  <h3 style={{ margin: 0, color: 'var(--tier-ultra)', fontSize: '1.4rem' }}>$179</h3>
+                </div>
+              </div>
+            </div>
+          </div>
+
           {selectedPlan && (
             <SaleForm
               plan={PLANS[selectedPlan]}
@@ -226,7 +266,7 @@ function App() {
               onCancel={() => setSelectedPlan(null)}
             />
           )}
-        </div>
+        </motion.div>
       );
 
       case 'network': return (
@@ -259,56 +299,74 @@ function App() {
       );
 
       case 'profile': return (
-        <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} style={{ padding: '2rem 1.5rem 100px', fontFamily: 'Verdana, sans-serif', textAlign: 'center' }}>
-          <div style={{ width: 80, height: 80, borderRadius: '50%', background: 'var(--accent)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '2rem', margin: '0 auto 1.5rem' }}>
-            {(user?.full_name || 'U').charAt(0).toUpperCase()}
+        <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="slide-up" style={{ padding: '2rem 1.5rem 100px', fontFamily: 'var(--font-main)', textAlign: 'center' }}>
+          <div className="float" style={{ position: 'relative', width: 100, height: 100, margin: '0 auto 1.5rem' }}>
+            <div style={{ position: 'absolute', inset: -5, borderRadius: '50%', background: 'var(--accent)', opacity: 0.2, filter: 'blur(10px)' }} />
+            <div style={{ position: 'relative', width: '100%', height: '100%', borderRadius: '50%', background: 'linear-gradient(135deg, var(--accent) 0%, var(--accent-dark) 100%)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '2.5rem', fontWeight: 900, color: 'var(--bg-primary)', boxShadow: '0 0 20px var(--accent-glow)' }}>
+              {(user?.full_name || 'U').charAt(0).toUpperCase()}
+            </div>
           </div>
-          <h2 style={{ textTransform: 'uppercase', fontSize: '1.2rem' }}>{user?.full_name}</h2>
-          <p style={{ color: 'var(--accent)', fontWeight: 700, marginBottom: '0.3rem', fontSize: '1rem' }}>{metrics.level}</p>
-          <p style={{ fontSize: '0.75rem', opacity: 0.5, marginBottom: '0.2rem' }}>{user?.email}</p>
-          <p style={{ fontSize: '0.7rem', opacity: 0.4 }}>{user?.role?.replace('_', ' ')}</p>
+          
+          <h2 style={{ textTransform: 'uppercase', fontSize: '1.4rem', fontFamily: 'var(--font-heading)', letterSpacing: '2px' }}>{user?.full_name}</h2>
+          <div style={{ display: 'inline-block', padding: '4px 16px', background: 'rgba(0,210,255,0.1)', borderRadius: '100px', border: '1px solid var(--accent-glow)', marginTop: '8px' }}>
+            <p style={{ color: 'var(--accent)', fontWeight: 700, margin: 0, fontSize: '0.75rem', textTransform: 'uppercase', letterSpacing: '1px' }}>{metrics.level}</p>
+          </div>
+          <p style={{ fontSize: '0.8rem', opacity: 0.5, marginTop: '12px' }}>{user?.email}</p>
 
           {/* Commission Breakdown */}
-          <div style={{ background: 'rgba(255,102,0,0.08)', border: '1px solid rgba(255,102,0,0.25)', borderRadius: '12px', padding: '1.2rem', margin: '1.5rem 0', textAlign: 'left' }}>
-            <p style={{ fontSize: '0.65rem', textTransform: 'uppercase', opacity: 0.6, marginBottom: '1rem' }}>Estructura de Comisiones</p>
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
-              <div className="card glass" style={{ textAlign: 'center', padding: '0.8rem' }}>
-                <p style={{ fontSize: '0.55rem', opacity: 0.5, textTransform: 'uppercase' }}>Comisión Activa</p>
-                <h3 style={{ margin: '4px 0', color: 'var(--accent)', fontSize: '1.4rem' }}>{(metrics.rate * 100).toFixed(0)}%</h3>
+          <div className="card glass" style={{ margin: '2rem 0', textAlign: 'left', padding: '1.5rem', background: 'rgba(0,210,255,0.02)' }}>
+            <p style={{ fontSize: '0.65rem', textTransform: 'uppercase', opacity: 0.6, marginBottom: '1.5rem', letterSpacing: '2px', fontWeight: 700 }}>Estructura de Comisiones</p>
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px' }}>
+              <div style={{ textAlign: 'center', padding: '1rem', background: 'rgba(255,255,255,0.03)', borderRadius: '12px', border: '1px solid rgba(255,255,255,0.05)' }}>
+                <p style={{ fontSize: '0.55rem', opacity: 0.5, textTransform: 'uppercase', marginBottom: '8px' }}>Tasa Activa</p>
+                <h3 style={{ margin: 0, color: 'var(--accent)', fontSize: '1.6rem' }}>{(metrics.rate * 100).toFixed(0)}%</h3>
               </div>
-              <div className="card glass" style={{ textAlign: 'center', padding: '0.8rem' }}>
-                <p style={{ fontSize: '0.55rem', opacity: 0.5, textTransform: 'uppercase' }}>Sueldo Base</p>
-                <h3 style={{ margin: '4px 0', color: metrics.base > 0 ? 'var(--success)' : 'inherit', fontSize: '1.4rem' }}>${metrics.base.toFixed(0)}</h3>
+              <div style={{ textAlign: 'center', padding: '1rem', background: 'rgba(255,255,255,0.03)', borderRadius: '12px', border: '1px solid rgba(255,255,255,0.05)' }}>
+                <p style={{ fontSize: '0.55rem', opacity: 0.5, textTransform: 'uppercase', marginBottom: '8px' }}>Sueldo Base</p>
+                <h3 style={{ margin: 0, color: metrics.base > 0 ? 'var(--success)' : 'inherit', fontSize: '1.6rem' }}>${metrics.base.toFixed(0)}</h3>
               </div>
-              <div className="card glass" style={{ textAlign: 'center', padding: '0.8rem' }}>
-                <p style={{ fontSize: '0.55rem', opacity: 0.5, textTransform: 'uppercase' }}>Billetera</p>
-                <h3 style={{ margin: '4px 0', fontSize: '1.4rem' }}>${(user?.wallet_balance || 0).toFixed(2)}</h3>
+              <div style={{ textAlign: 'center', padding: '1rem', background: 'rgba(255,255,255,0.03)', borderRadius: '12px', border: '1px solid rgba(255,255,255,0.05)' }}>
+                <p style={{ fontSize: '0.55rem', opacity: 0.5, textTransform: 'uppercase', marginBottom: '8px' }}>Wallet</p>
+                <h3 style={{ margin: 0, fontSize: '1.6rem', color: 'white' }}>${(user?.wallet_balance || 0).toFixed(0)}</h3>
               </div>
-              <div className="card glass" style={{ textAlign: 'center', padding: '0.8rem' }}>
-                <p style={{ fontSize: '0.55rem', opacity: 0.5, textTransform: 'uppercase' }}>Ventas</p>
-                <h3 style={{ margin: '4px 0', fontSize: '1.4rem' }}>{sales.length}</h3>
+              <div style={{ textAlign: 'center', padding: '1rem', background: 'rgba(255,255,255,0.03)', borderRadius: '12px', border: '1px solid rgba(255,255,255,0.05)' }}>
+                <p style={{ fontSize: '0.55rem', opacity: 0.5, textTransform: 'uppercase', marginBottom: '8px' }}>Ventas</p>
+                <h3 style={{ margin: 0, fontSize: '1.6rem', color: 'white' }}>{sales.length}</h3>
               </div>
             </div>
 
             {/* Next tier hint */}
-            {user?.role === 'SELLER' && (
-              <div style={{ marginTop: '1rem', padding: '0.8rem', background: 'rgba(255,255,255,0.04)', borderRadius: '8px' }}>
-                <p style={{ fontSize: '0.65rem', opacity: 0.7, marginBottom: '4px' }}>Próximo nivel:</p>
-                {sales.length < 20 && <p style={{ fontSize: '0.7rem', color: 'var(--accent)' }}>Vendedor PRO → {20 - sales.length} ventas más (7% + $250 base)</p>}
-                {sales.length >= 20 && sales.length < 31 && <p style={{ fontSize: '0.7rem', color: 'var(--accent)' }}>Vendedor ULTRA → {31 - sales.length} ventas más (9% + $300 base)</p>}
-                {sales.length >= 31 && <p style={{ fontSize: '0.7rem', color: 'var(--success)' }}>🏆 Nivel máximo alcanzado</p>}
-              </div>
-            )}
-            {user?.role === 'DISTRIBUTOR' && (
-              <div style={{ marginTop: '1rem', padding: '0.8rem', background: 'rgba(255,255,255,0.04)', borderRadius: '8px' }}>
-                <p style={{ fontSize: '0.65rem', opacity: 0.7, marginBottom: '4px' }}>Progreso del equipo:</p>
-                {metrics.level === 'DISTRIBUIDOR BASIC' && <p style={{ fontSize: '0.7rem', color: 'var(--accent)' }}>Distribuidor 1 → {50 - sales.length} ventas más (12% + $500 base)</p>}
-                {metrics.level === 'DISTRIBUIDOR 1' && <p style={{ fontSize: '0.7rem', color: 'var(--accent)' }}>Distribuidor 2 → alcanza 101 ventas (15% + $600 base)</p>}
-                {metrics.level === 'DISTRIBUIDOR 2' && <p style={{ fontSize: '0.7rem', color: 'var(--accent)' }}>Distribuidor 3 → alcanza 201 ventas (18% + $600 base)</p>}
-                {metrics.level === 'DISTRIBUIDOR 3' && <p style={{ fontSize: '0.7rem', color: 'var(--success)' }}>🏆 Nivel máximo alcanzado</p>}
-              </div>
-            )}
+            <div style={{ marginTop: '1.5rem', padding: '1rem', background: 'rgba(0,210,255,0.05)', borderRadius: '12px', border: '1px solid var(--accent-glow)' }}>
+                <p style={{ fontSize: '0.6rem', opacity: 0.7, marginBottom: '6px', textTransform: 'uppercase', letterSpacing: '1px' }}>Objetivo de Rango:</p>
+                {user?.role === 'SELLER' ? (
+                  <>
+                    {sales.length < 20 && <p style={{ fontSize: '0.75rem', color: 'var(--accent)', margin: 0, fontWeight: 600 }}>Próximo: PRO ({(20 - sales.length)} ventas restantes)</p>}
+                    {sales.length >= 20 && sales.length < 31 && <p style={{ fontSize: '0.75rem', color: 'var(--accent)', margin: 0, fontWeight: 600 }}>Próximo: ULTRA ({(31 - sales.length)} ventas restantes)</p>}
+                    {sales.length >= 31 && <p style={{ fontSize: '0.75rem', color: 'var(--success)', margin: 0, fontWeight: 700 }}>Nivel de Élite Alcanzado 🏆</p>}
+                  </>
+                ) : (
+                  <>
+                    {metrics.level === 'DISTRIBUIDOR BASIC' && <p style={{ fontSize: '0.75rem', color: 'var(--accent)', margin: 0, fontWeight: 600 }}>D1: Faltan {(50 - sales.length)} ventas de equipo</p>}
+                    {metrics.level === 'DISTRIBUIDOR 1' && <p style={{ fontSize: '0.75rem', color: 'var(--accent)', margin: 0, fontWeight: 600 }}>D2: Objetivo 101 ventas de equipo</p>}
+                    {metrics.level === 'DISTRIBUIDOR 2' && <p style={{ fontSize: '0.75rem', color: 'var(--accent)', margin: 0, fontWeight: 600 }}>D3: Objetivo 201 ventas de equipo</p>}
+                    {metrics.level === 'DISTRIBUIDOR 3' && <p style={{ fontSize: '0.75rem', color: 'var(--success)', margin: 0, fontWeight: 700 }}>Máxima Jerarquía 🏆</p>}
+                  </>
+                )}
+            </div>
           </div>
+
+          <button 
+            onClick={() => {
+              localStorage.removeItem('connexo_session');
+              window.location.reload();
+            }}
+            className="btn glass" 
+            style={{ width: '100%', marginTop: '1rem', color: 'var(--danger)', borderColor: 'rgba(239,68,68,0.2)', fontSize: '0.8rem' }}
+          >
+            Finalizar Sesión de Agente
+          </button>
+        </motion.div>
+      );
 
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12, marginBottom: '1.5rem' }}>
             <div className="card glass">

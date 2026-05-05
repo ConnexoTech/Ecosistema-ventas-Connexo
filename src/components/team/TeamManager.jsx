@@ -57,9 +57,9 @@ const TeamManager = ({ users, currentUser, onAddUser, sales }) => {
   };
 
   return (
-    <div style={{ padding: '0 1.5rem 100px', fontFamily: 'Verdana, sans-serif' }}>
+    <div className="slide-up" style={{ padding: '0 1.5rem 100px', fontFamily: 'var(--font-main)' }}>
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '2rem' }}>
-        <h2 style={{ fontSize: '1.4rem', textTransform: 'uppercase' }}>Gestión de Red</h2>
+        <h2 style={{ fontSize: '1.4rem', textTransform: 'uppercase', fontFamily: 'var(--font-heading)' }}>Gestión de Red</h2>
         <div style={{ display: 'flex', gap: '8px' }}>
           <button onClick={generatePDF} className="btn glass" style={{ width: '44px', height: '44px', padding: 0 }} aria-label="Descargar PDF">
             <Download size={18} />
@@ -72,10 +72,13 @@ const TeamManager = ({ users, currentUser, onAddUser, sales }) => {
         </div>
       </div>
 
-      <div className="card glass" style={{ marginBottom: '2rem', border: '1px solid var(--success)' }}>
-        <p style={{ fontSize: '0.7rem', textTransform: 'uppercase' }}>Volumen Grupal</p>
-        <h2 style={{ margin: '8px 0', color: 'var(--success)' }}>${teamVolume.toFixed(2)}</h2>
-        <p style={{ fontSize: '0.8rem', opacity: 0.7 }}>Miembros en red: {myTeam.length}</p>
+      <div className="card glass glow-pulse" style={{ marginBottom: '2.5rem', border: '1px solid var(--success)', background: 'linear-gradient(135deg, var(--bg-secondary) 0%, rgba(0,255,157,0.05) 100%)' }}>
+        <p style={{ fontSize: '0.6rem', textTransform: 'uppercase', letterSpacing: '2px', opacity: 0.8 }}>Volumen Grupal de Red</p>
+        <h2 style={{ margin: '8px 0', color: 'var(--success)', fontSize: '2rem', textShadow: '0 0 10px rgba(0,255,157,0.3)' }}>${teamVolume.toFixed(2)}</h2>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: '12px' }}>
+            <p style={{ fontSize: '0.8rem', opacity: 0.7, margin: 0 }}>Miembros activos: {myTeam.length}</p>
+            <div style={{ padding: '4px 12px', background: 'rgba(0,255,157,0.1)', borderRadius: '100px', fontSize: '0.65rem', color: 'var(--success)', fontWeight: 700 }}>LIVE</div>
+        </div>
       </div>
 
       {isAdding && (
@@ -84,59 +87,66 @@ const TeamManager = ({ users, currentUser, onAddUser, sales }) => {
           animate={{ opacity: 1, y: 0 }} 
           onSubmit={handleSubmit} 
           className="card glass" 
-          style={{ display: 'flex', flexDirection: 'column', gap: '1rem', marginBottom: '2rem' }}
+          style={{ display: 'flex', flexDirection: 'column', gap: '1rem', marginBottom: '2rem', border: '1px solid var(--accent-glow)' }}
         >
+          <h3 style={{ fontSize: '0.9rem', marginBottom: '0.5rem', textTransform: 'uppercase', color: 'var(--accent)' }}>Nuevo Miembro</h3>
           <input 
             name="name" required 
-            placeholder="Nombre completo del vendedor" 
-            style={{ width: '100%', padding: '12px', background: 'rgba(0,0,0,0.3)', border: '1px solid var(--glass-border)', color: 'white', borderRadius: '8px' }} 
+            placeholder="Nombre completo" 
+            style={{ width: '100%', padding: '12px', background: 'rgba(0,0,0,0.3)', border: '1px solid var(--glass-border)', color: 'white', borderRadius: '8px', fontSize: '0.9rem' }} 
           />
           <input 
             name="email" type="email" required 
             placeholder="Correo electrónico" 
-            style={{ width: '100%', padding: '12px', background: 'rgba(0,0,0,0.3)', border: '1px solid var(--glass-border)', color: 'white', borderRadius: '8px' }} 
+            style={{ width: '100%', padding: '12px', background: 'rgba(0,0,0,0.3)', border: '1px solid var(--glass-border)', color: 'white', borderRadius: '8px', fontSize: '0.9rem' }} 
           />
           {canAddMembers && (
             <select
               name="role"
-              style={{ width: '100%', padding: '12px', background: 'rgba(0,0,0,0.3)', border: '1px solid var(--glass-border)', color: 'white', borderRadius: '8px' }}
+              style={{ width: '100%', padding: '12px', background: 'rgba(0,0,0,0.3)', border: '1px solid var(--glass-border)', color: 'white', borderRadius: '8px', fontSize: '0.9rem' }}
             >
-              <option value="SELLER">Vendedor</option>
-              {/* Distribuidores solo pueden crear vendedores */}
+              <option value="SELLER">Rol: Vendedor</option>
               {currentUser?.role === 'SUPER_ADMIN' && (
-                <option value="DISTRIBUTOR">Distribuidor</option>
+                <option value="DISTRIBUTOR">Rol: Distribuidor</option>
               )}
             </select>
           )}
-          <p style={{ fontSize: '0.7rem', opacity: 0.5 }} aria-live="polite">
-            ⓘ Se registrará en Supabase. Su contraseña inicial por defecto es 'connexo123'.
-          </p>
-          <button type="submit" disabled={isSubmitting} className="btn btn-primary" style={{ height: '44px', textTransform: 'uppercase' }}>
-            {isSubmitting ? 'Registrando...' : 'Finalizar Registro'}
+          <div style={{ padding: '10px', background: 'rgba(0,210,255,0.05)', borderRadius: '8px', border: '1px solid rgba(0,210,255,0.1)' }}>
+            <p style={{ fontSize: '0.65rem', opacity: 0.7, margin: 0 }}>
+              ⓘ El usuario podrá ingresar con su email y la clave temporal: <b>connexo123</b>
+            </p>
+          </div>
+          <button type="submit" disabled={isSubmitting} className="btn btn-primary" style={{ height: '48px', textTransform: 'uppercase', fontSize: '0.9rem', color: 'var(--bg-primary)' }}>
+            {isSubmitting ? 'Procesando...' : 'Confirmar Registro'}
           </button>
         </motion.form>
       )}
 
-      <h3 style={{ marginBottom: '1rem' }}>Miembros ({myTeam.length})</h3>
-      <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+      <h3 style={{ marginBottom: '1.2rem', fontSize: '0.9rem', textTransform: 'uppercase', opacity: 0.6, letterSpacing: '1px' }}>Miembros de Red ({myTeam.length})</h3>
+      <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
         {myTeam.length === 0 ? (
-          <p style={{ textAlign: 'center', opacity: 0.4, padding: '2rem', fontSize: '0.85rem' }}>
-            No hay miembros en tu red aún. Agrega tu primer vendedor.
+          <p style={{ textAlign: 'center', opacity: 0.4, padding: '3rem', fontSize: '0.85rem' }}>
+            No se han detectado agentes vinculados.<br/>Use el botón superior para expandir su red.
           </p>
         ) : (
           myTeam.map(u => (
             <div key={u.uid || u.id} className="card glass" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-              <div>
-                <p style={{ margin: 0, fontWeight: 700 }}>{u.full_name || u.name}</p>
-                <p style={{ margin: 0, fontSize: '0.7rem' }}>
-                  {u.is_certified ? '✓ Certificado' : '⏳ Pendiente'}
-                </p>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                <div style={{ width: '40px', height: '40px', borderRadius: '12px', background: 'rgba(255,255,255,0.05)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 700, color: 'var(--accent)' }}>
+                  {(u.full_name || u.name || 'U').charAt(0)}
+                </div>
+                <div>
+                  <p style={{ margin: 0, fontWeight: 700, fontSize: '0.9rem' }}>{u.full_name || u.name}</p>
+                  <p style={{ margin: 0, fontSize: '0.7rem', color: u.is_certified ? 'var(--success)' : 'var(--text-secondary)' }}>
+                    {u.is_certified ? '✓ Certificado' : '⏳ Verificación Pendiente'}
+                  </p>
+                </div>
               </div>
               <div style={{ textAlign: 'right' }}>
-                <p style={{ margin: 0, fontWeight: 700, color: 'var(--accent)' }}>
+                <p style={{ margin: 0, fontWeight: 700, color: 'var(--text-primary)', fontSize: '1rem' }}>
                   ${sales.filter(s => s.seller_id === (u.uid || u.id)).reduce((acc, s) => acc + (s.amount || 0), 0).toFixed(0)}
                 </p>
-                <p style={{ margin: 0, fontSize: '0.65rem', opacity: 0.5 }}>volumen</p>
+                <p style={{ margin: 0, fontSize: '0.6rem', opacity: 0.4, textTransform: 'uppercase' }}>volumen</p>
               </div>
             </div>
           ))
