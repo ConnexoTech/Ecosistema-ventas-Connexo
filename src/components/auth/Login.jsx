@@ -47,10 +47,11 @@ const Login = ({ onLogin, onAdminBypass }) => {
             borderRadius: 'var(--radius-sm)', 
             border: '1px solid var(--accent)', 
             background: activeRole === 'VENDEDOR' ? 'var(--accent)' : 'transparent',
-            color: activeRole === 'VENDEDOR' ? 'black' : 'var(--accent)',
+            color: activeRole === 'VENDEDOR' ? 'var(--bg-primary)' : 'var(--accent)',
             fontWeight: 700,
             cursor: 'pointer',
-            transition: 'all 0.2s'
+            transition: 'all 0.2s',
+            fontFamily: 'var(--font-heading)'
           }}
         >
           Vendedor
@@ -63,10 +64,11 @@ const Login = ({ onLogin, onAdminBypass }) => {
             borderRadius: 'var(--radius-sm)', 
             border: '1px solid var(--accent)', 
             background: activeRole === 'DISTRIBUIDOR' ? 'var(--accent)' : 'transparent',
-            color: activeRole === 'DISTRIBUIDOR' ? 'black' : 'var(--accent)',
+            color: activeRole === 'DISTRIBUIDOR' ? 'var(--bg-primary)' : 'var(--accent)',
             fontWeight: 700,
             cursor: 'pointer',
-            transition: 'all 0.2s'
+            transition: 'all 0.2s',
+            fontFamily: 'var(--font-heading)'
           }}
         >
           Distribuidor
@@ -100,7 +102,7 @@ const Login = ({ onLogin, onAdminBypass }) => {
           />
         </div>
 
-        <button type="submit" className="btn btn-primary" style={{ padding: '1rem', width: '100%' }}>
+        <button type="submit" className="btn btn-primary" style={{ padding: '1rem', width: '100%', color: 'var(--bg-primary)' }}>
           Ingresar al Panel
         </button>
       </form>

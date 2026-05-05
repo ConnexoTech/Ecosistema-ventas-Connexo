@@ -123,12 +123,11 @@ function App() {
     setNotifications(prev => [{ id: Date.now(), message, type, read: false }, ...prev]);
   };
 
-  // --- Loading Screen ---
   if (isLoading && !isAuthenticated) {
     return (
-      <div style={{ height: '100vh', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', background: 'var(--bg-primary)', color: 'var(--accent)', fontFamily: 'Verdana', padding: '2rem', textAlign: 'center', gap: '1.5rem' }}>
-        <div style={{ width: 40, height: 40, border: '4px solid rgba(255,102,0,0.2)', borderTop: '4px solid var(--accent)', borderRadius: '50%', animation: 'spin 0.8s linear infinite' }} />
-        <p>Iniciando Ecosistema...</p>
+      <div style={{ height: '100vh', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', background: 'var(--bg-primary)', color: 'var(--accent)', fontFamily: 'var(--font-main)', padding: '2rem', textAlign: 'center', gap: '1.5rem' }}>
+        <div style={{ width: 40, height: 40, border: '4px solid rgba(0,210,255,0.1)', borderTop: '4px solid var(--accent)', borderRadius: '50%', animation: 'spin 0.8s linear infinite' }} />
+        <p style={{ letterSpacing: '2px', textTransform: 'uppercase', fontSize: '0.8rem', fontWeight: 600 }}>Iniciando Ecosistema...</p>
       </div>
     );
   }
@@ -158,7 +157,7 @@ function App() {
               <p style={{ fontSize: '0.65rem', textAlign: 'right', marginTop: '4px', opacity: 0.6 }}>{Math.min(sales.length, 100)} / 100 ventas</p>
             </div>
 
-            <p style={{ fontSize: '0.75rem', fontWeight: 700, color: user?.is_certified ? 'var(--success)' : 'var(--danger)' }}>
+            <p style={{ fontSize: '0.75rem', fontWeight: 700, color: user?.is_certified ? 'var(--success)' : 'var(--danger)', fontFamily: 'var(--font-heading)' }}>
               {user?.is_certified ? '✓ CERTIFICADO CONNEXO' : '⚠ CERTIFICACIÓN PENDIENTE'}
             </p>
           </div>

@@ -10,9 +10,9 @@ const courses = [
 
 const Academy = ({ user, onCertify }) => {
   return (
-    <div style={{ padding: '0 1.5rem 100px', fontFamily: 'Verdana, sans-serif' }}>
+    <div style={{ padding: '0 1.5rem 100px', fontFamily: 'var(--font-main)' }}>
       <div style={{ marginBottom: '2rem' }}>
-        <h2 style={{ fontSize: '1.4rem', textTransform: 'uppercase' }}>Academia Connexo</h2>
+        <h2 style={{ fontSize: '1.4rem', textTransform: 'uppercase', fontFamily: 'var(--font-heading)' }}>Academia Connexo</h2>
         <p style={{ fontSize: '0.9rem', color: 'var(--text-secondary)' }}>Potencia tus habilidades y desbloquea tus comisiones.</p>
       </div>
 
@@ -23,7 +23,7 @@ const Academy = ({ user, onCertify }) => {
             role="alert"
             aria-live="polite"
         >
-            <h3 style={{ color: 'var(--accent)', display: 'flex', alignItems: 'center', gap: '8px', fontSize: '1rem' }}>
+            <h3 style={{ color: 'var(--accent)', display: 'flex', alignItems: 'center', gap: '8px', fontSize: '1rem', fontFamily: 'var(--font-heading)' }}>
                 <Lock size={18} /> BENEFICIOS BLOQUEADOS
             </h3>
             <p style={{ fontSize: '0.85rem', marginTop: '8px' }}>
@@ -32,7 +32,7 @@ const Academy = ({ user, onCertify }) => {
             <button 
                 onClick={onCertify} 
                 className="btn btn-primary" 
-                style={{ marginTop: '1.5rem', width: '100%', textTransform: 'uppercase', letterSpacing: '1px' }}
+                style={{ marginTop: '1.5rem', width: '100%', textTransform: 'uppercase', letterSpacing: '1px', color: 'var(--bg-primary)' }}
                 aria-label="Completar certificación académica ahora"
             >
                 Aprobar Certificación
@@ -44,17 +44,17 @@ const Academy = ({ user, onCertify }) => {
         {courses.map((course) => (
           <div key={course.id} className="card glass" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', opacity: course.status === 'LOCKED' ? 0.5 : 1 }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-                <div style={{ width: '40px', height: '40px', borderRadius: '50%', background: 'rgba(255,255,255,0.1)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                    {course.status === 'COMPLETED' ? <CheckCircle size={20} color="#10b981" /> : <BookOpen size={20} />}
+                <div style={{ width: '40px', height: '40px', borderRadius: '50%', background: 'rgba(255,255,255,0.05)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                    {course.status === 'COMPLETED' ? <CheckCircle size={20} color="var(--success)" /> : <BookOpen size={20} />}
                 </div>
                 <div>
-                    <h4 style={{ margin: 0, fontSize: '0.95rem' }}>{course.title}</h4>
+                    <h4 style={{ margin: 0, fontSize: '0.95rem', fontWeight: 600 }}>{course.title}</h4>
                     <p style={{ margin: 0, fontSize: '0.75rem' }}>{course.duration}</p>
                 </div>
             </div>
             {course.status === 'AVAILABLE' && (
-                <button className="btn" style={{ padding: '8px 12px', background: 'var(--accent)', color: 'black' }}>
-                    <Play size={14} fill="black" />
+                <button className="btn" style={{ padding: '8px 12px', background: 'var(--accent)', color: 'var(--bg-primary)' }}>
+                    <Play size={14} fill="var(--bg-primary)" />
                 </button>
             )}
             {course.status === 'LOCKED' && <Lock size={16} />}

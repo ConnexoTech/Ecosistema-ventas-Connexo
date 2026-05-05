@@ -1,36 +1,36 @@
 @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Tomorrow:ital,wght@1,600&display=swap');
 
 :root {
-  /* Core Colors from Palette */
-  --bg-primary: #210900;
-  --bg-secondary: #2b1208;
-  --text-primary: #ffefe5;
-  --text-secondary: #ffa35d;
-  --accent: #ff6600;
-  --accent-dark: #962700;
-  --accent-glow: rgba(255, 102, 0, 0.3);
-  --success: #10b981;
-  --danger: #ef4444;
+  /* Core Colors from Palette - Futuristic Cold Style */
+  --bg-primary: #050a14;
+  --bg-secondary: #0a111f;
+  --text-primary: #f0f6fc;
+  --text-secondary: #8b949e;
+  --accent: #00d2ff;
+  --accent-dark: #008eb4;
+  --accent-glow: rgba(0, 210, 255, 0.25);
+  --success: #00ff9d;
+  --danger: #ff3e3e;
 
   /* Tier Colors */
-  --tier-basic: #94a3b8;
-  --tier-pro: #38bdf8;
-  --tier-ultra: #f59e0b;
+  --tier-basic: #8b949e;
+  --tier-pro: #00d2ff;
+  --tier-ultra: #bd00ff;
 
   /* Layout */
-  --nav-height: 70px;
+  --nav-height: 75px;
   --radius-sm: 8px;
-  --radius-md: 12px;
-  --radius-lg: 20px;
+  --radius-md: 16px;
+  --radius-lg: 24px;
   --container-max: 600px;
 
   /* Senior UI Specs */
-  --font-main: 'Verdana', sans-serif;
-  --font-heading: 'Verdana', sans-serif;
+  --font-main: 'Space Grotesk', sans-serif;
+  --font-heading: 'Tomorrow', sans-serif;
 
-  --glass-bg: rgba(33, 9, 0, 0.7);
-  --glass-border: rgba(255, 102, 0, 0.15);
-  --glass-blur: blur(12px);
+  --glass-bg: rgba(10, 17, 31, 0.75);
+  --glass-border: rgba(0, 210, 255, 0.2);
+  --glass-blur: blur(16px);
 
   color-scheme: dark;
 }
@@ -49,7 +49,9 @@ body {
   min-height: 100vh;
   line-height: 1.5;
   overflow-x: hidden;
-  background-image: radial-gradient(circle at 50% 0%, #3a1505 0%, transparent 70%);
+  background-image: 
+    radial-gradient(circle at 50% 0%, rgba(0, 210, 255, 0.08) 0%, transparent 70%),
+    radial-gradient(circle at 0% 100%, rgba(189, 0, 255, 0.05) 0%, transparent 50%);
 }
 
 #root {
