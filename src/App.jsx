@@ -15,6 +15,7 @@ import BadgeGrid from './components/badges/BadgeGrid';
 
 const SESSION_KEY = 'connexo_session';
 
+
 function App() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [isLoading,       setIsLoading]       = useState(true);   // true al inicio para restaurar sesión
